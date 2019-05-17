@@ -12,7 +12,7 @@ This repo contains presentations/talks/slides shared to DOxMX
 
 ---
 
-### One lines for installation
+### One liners for installation
 
 - pandoc: Use the appropriate installer for your distribution, example:
   ```bash
@@ -55,10 +55,17 @@ To use other themes, simply:
 pandoc \
   -t revealjs \
   -s \
-  -V theme=<THEMENAME> \
+  -V theme=<THEME_NAME> \
   -o my_notes.html \
   my_notes.md
 ```
+
+Some examples are:
+- night
+- moon
+- white
+
+---
 
 Now you can use your generated html file in a browser!
 
