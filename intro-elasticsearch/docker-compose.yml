@@ -1,0 +1,163 @@
+version: '3.6'
+services:
+  es-node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: es01
+    environment:
+      - cluster.name=es-cluster
+      - node.name=es01
+      - node.master=true
+      - node.data=false
+      - node.ml=false
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - path.repo=/mnt/snapshots
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - es-data1:/usr/share/elasticsearch/data
+      - /tmp/snapshots:/mnt/snapshots  
+    ports:
+      - 9200:9200
+      - 9600:9600 # required for Performance Analyzer
+    networks:
+      - es-net
+      
+  es-node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - node.master=true
+      - node.data=false
+      - node.ml=false
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - path.repo=/mnt/snapshots
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - es-data2:/usr/share/elasticsearch/data
+      - /tmp/snapshots:/mnt/snapshots
+    networks:
+      - es-net
+
+  es-node3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - node.master=true
+      - node.data=false
+      - node.ml=false
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshots
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - es-data3:/usr/share/elasticsearch/data
+      - /tmp/snapshots:/mnt/snapshots
+    networks:
+      - es-net
+
+  es-node4:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: es04
+    environment:
+      - node.name=es04
+      - node.master=false
+      - node.data=true
+      - node.ml=false
+      - node.ingest=false
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshots
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - es-data4:/usr/share/elasticsearch/data
+      - /tmp/snapshots:/mnt/snapshots
+    networks:
+      - es-net
+
+  es-node5:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: es05
+    environment:
+      - node.name=es05
+      - node.master=false
+      - node.data=true
+      - node.ml=false
+      - node.ingest=false
+      - discovery.seed_hosts=es01,es02,es3
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshots
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - es-data5:/usr/share/elasticsearch/data
+      - /tmp/snapshots:/mnt/snapshots
+    networks:
+      - es-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    container_name: es-kibana
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      ELASTICSEARCH_URL: http://es-node1:9200
+      ELASTICSEARCH_HOSTS: http://es-node1:9200
+    networks:
+      - es-net
+
+volumes:
+  es-data1:
+  es-data2:
+  es-data3:
+  es-data4:
+  es-data5:
+
+networks:
+  es-net:

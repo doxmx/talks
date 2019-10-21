@@ -1,0 +1,101 @@
+GET _cat/indices
+
+GET .kibana_1
+
+GET _cluster/health
+
+GET _cat/nodes
+
+GET _search/my_blogs/
+
+
+POST my_blogs/_doc/1
+{
+  "id": "1",
+  "title": "Phrase Queries: a world without Stopwords",
+  "date":"March 7, 2016",
+  "category": "Engineering",
+  "author":{
+    "first_name": "Gabriel",
+    "last_name": "Moskovicz"
+  }
+}
+
+POST my_blogs/_doc/2
+{
+  "id": "1",
+  "title": "Liga de la justicia 1",
+  "date":"March 7, 2016",
+  "category": "Comics",
+  "author":{
+    "first_name": "Gabriel",
+    "last_name": "Moskito"
+  }
+}
+
+GET _cat/indices/
+
+GET my_blogs/_doc/1
+
+GET my_blogs/_doc/2
+
+GET my_blogs/_mget
+{
+  "docs": [
+    {"_id":2},
+    {"_id":3}
+  ]
+}
+
+DELETE twitter
+
+GET kibana_sample_data_flights/_count
+
+GET messages/_search
+
+GET messages/_search
+{
+  "size": 100,
+  "_source": {
+    "includes": ["message"]
+  },
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET messages/_search
+{
+  "query": {
+    "match": {
+      "message": "Failed"
+    }
+  }
+}
+
+PUT /twitter
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 1, 
+            "number_of_replicas" : 1
+        }
+    }
+}
+
+
+PUT /twitter/_settings
+{
+    "index" : {
+        "number_of_replicas" : 1
+    }
+}
+
+PUT /twitter/_settings
+{
+    "index" : {
+        "number_of_replicas" : 1
+    }
+}
+
+GET _cat/shards?v
