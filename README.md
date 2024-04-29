@@ -12,58 +12,36 @@ This repo contains presentations/talks/slides shared to DOxMX
 
 ---
 
-### One liners for installation
+## Generating presentations
 
-- pandoc: Use the appropriate installer for your distribution, example:
-  ```bash
-  sudo $( type -p dnf yum ) install pandoc -y
-  ```
+- Generate a markdown file
+- Transform the markdown to a presentation with `pandoc`
 
-- reveal.js:
-  ```
-  revealjs_url=https://github.com/hakimel/reveal.js
-  latest_release=$( curl -sI ${revealjs_url}/releases/latest |
-                      awk -F/ '/^Location:/ {print $8}' |
-                      tr -d '\r' )
-  curl -sLO "${revealjs_url}/archive/${latest_release}.tar.gz"
-  tar xzf ${latest_release}.tar.gz
-  mv reveal.js{-${latest_release},}
-  ```
-
----
-
-## Generating presentation
-
-- Generate a markdown file, then transform the markdown with `pandoc`:
-  ```
-  pandoc \
-    -t revealjs \
-    -s \
-    -o my_notes.html \
-    my_notes.md
-  ```
+```Shell
+$( type -p podman docker | head -1 ) run \
+    --rm \
+    --volume ${PWD}:/data:z \
+    docker.io/pandoc/core:latest \
+      -t revealjs \
+      -s \
+      -o my_presentation.html \
+      my_presentation.md \
+      -V revealjs-url=https://unpkg.com/reveal.js/ \
+      -V theme=serif \
+      --slide-level 3
+```
 
 ---
 
 ## reveal.js themes
 
-reveal.js comes with some themes included, find them in `reveal.js/css/theme/`.
+To use other themes, add the flag:
 
-To use other themes, simply:
-
-```
-pandoc \
-  -t revealjs \
-  -s \
-  -V theme=<THEME_NAME> \
-  -o my_notes.html \
-  my_notes.md
+```Shell
+-V theme=<THEME_NAME> \
 ```
 
-Some examples are:
-- night
-- moon
-- white
+The list of included themes is found in the [revealjs project](https://github.com/hakimel/reveal.js/tree/master/css/theme/source)
 
 ---
 
